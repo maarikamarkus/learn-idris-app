@@ -15,7 +15,35 @@ a {
   box-sizing: border-box;
 }
 
+#material {
+  grid-area: material;
+  padding-left: 10px;
+  /* border: 1px solid yellow; */
+}
+
 #editor {
-  width: 100px;
-  height: 100px;
+  grid-area: editor;
+  position: relative;
+  /*border: 1px solid red;*/
+}
+
+#repl {
+  grid-area: repl;
+  padding-left: 10px;
+  /* border: 1px solid purple; */
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas: 
+    "material editor repl"
+  ;
+}
+
+.container,
+#__next,
+body, html {
+  height: 100%;
 }
