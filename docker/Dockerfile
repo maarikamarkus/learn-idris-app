@@ -18,5 +18,7 @@ COPY --from=build /root/.idris2 /root/.idris2
 
 ENV PATH="/root/.idris2/bin:${PATH}"
 
-CMD echo "Hello World" && echo "1+1" | idris2
+COPY ./evaluate.sh .
+
+CMD ./evaluate.sh
  
