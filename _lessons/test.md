@@ -12,7 +12,7 @@ Implementeeri toodud funktsioonid.
         fst = ?rhs_fst
 
 
-## 2.  Funktsioon `length ` - listi pikkuse arvutamine
+## 2.  Funktsioon `sumInt ` - saades sisendiks naturaalarvu x tagastab x-st väiksemate või võrdsete arvude summa
 
-        length : List a -> Int
-        length = ?rhs_length
+        sumInt : Int -> Int
+        sumInt n = ?rhs_length
