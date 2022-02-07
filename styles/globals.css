@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   padding: 0;
@@ -16,30 +20,35 @@ a {
 }
 
 #material {
-  grid-area: material;
+  /*grid-area: material;*/
+  /*grid-columns: 1;*/
   padding-left: 10px;
   /* border: 1px solid yellow; */
 }
 
 #editor {
-  grid-area: editor;
-  position: relative;
+  /*grid-area: editor;*/
+  /*grid-columns: 2;*/
+  /*position: relative;*/
   /*border: 1px solid red;*/
 }
 
 #repl {
-  grid-area: repl;
+  background-color: black;
+  color: white;
+  /*grid-area: repl;*/
+  /*grid-columns: 3;*/
   padding-left: 10px;
   /* border: 1px solid purple; */
 }
 
 .container {
-  display: grid;
+  /*display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: auto;
-  grid-template-areas: 
+  grid-template-rows: auto;*/
+  /*grid-template-areas: 
     "material editor repl"
-  ;
+  ;*/
 }
 
 .container,
