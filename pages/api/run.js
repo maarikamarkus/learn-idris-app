@@ -2,15 +2,17 @@
 const fs = require('fs');
 
 export default function handler(req, res) {
+  //console.log(req.body);
+
   // sisendist kood
   const userCode = req.body.code;
-  const lesson = req.body.lesson;
+  const lessonId = req.body.lessonId;
 
   // juurde panna test case'id koos main funktsiooniga
   // kuidas tean, millisest test failist test case'id võtta? 
   // annan lessoni nime kaasa? ja loodan, et on sama nimega .yml _tests kaustas?
 
-  const testCases = getTestCases(lesson);
+  const testCases = getTestCases(lessonId);
 
 
   // tekitada .idr fail
@@ -35,8 +37,8 @@ export default function handler(req, res) {
 }
 
 // TODO: test that fs works
-function getTestCases(lesson) {
-  fs.readFile("../../_tests/" + lesson + ".yml", "utf-8", (err, data) => {
+function getTestCases(lessonId) {
+  fs.readFile("_tests/" + lessonId + ".yml", "utf-8", (err, data) => {
     if (err) {
       // TODO: find a better way
       console.error(err);

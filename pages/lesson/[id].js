@@ -39,6 +39,23 @@ export default function Lesson({ lessonData }) {
     } 
   });
 
+  async function runCode() {
+    const code = codeflask.current.getCode();
+    //console.log(code);
+
+    const res = await fetch('/api/run', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code,
+        lessonId: lessonData.id,
+      }),
+    });
+
+  }
+
   return (
     <div className={'flex flex-col h-screen'}>
       <div className={'flex flex-row grow'}>
@@ -61,17 +78,18 @@ export default function Lesson({ lessonData }) {
       </div>
 
       <div className={'footer'}>
-        <div className={'btn'}>
+        <div className={'btn'} onClick={runCode}>
           Käivita
         </div>
+    
         <div className={'btn'}>
           Eelmine teema
         </div>
+    
         <div className={'btn'}>
           Järgmine teema
         </div>
       </div>
-    
     </div>
     
   )
