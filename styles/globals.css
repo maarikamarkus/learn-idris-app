@@ -1,3 +1,11 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.btn {
+  @apply bg-sky-100 text-blue-600 rounded p-2 cursor-pointer;
+}
+
 html,
 body {
   padding: 0;
@@ -16,34 +24,12 @@ a {
 }
 
 #material {
-  grid-area: material;
   padding-left: 10px;
-  /* border: 1px solid yellow; */
-}
-
-#editor {
-  grid-area: editor;
-  position: relative;
-  /*border: 1px solid red;*/
 }
 
 #repl {
-  grid-area: repl;
+  background-color: black;
+  color: white;
   padding-left: 10px;
-  /* border: 1px solid purple; */
 }
 
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: auto;
-  grid-template-areas: 
-    "material editor repl"
-  ;
-}
-
-.container,
-#__next,
-body, html {
-  height: 100%;
-}
