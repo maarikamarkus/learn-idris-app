@@ -60,7 +60,7 @@ export default function Lesson({ lessonData }) {
       
       </div>
 
-      <div className={'flex flex-row space-x-3 p-3 justify-end z-50 shadow-[0_-15px_30px_-25px_rgba(0,0,0,0.3)] border-solid border border-slate-200'}>
+      <div className={'footer'}>
         <div className={'btn'}>
           Käivita
         </div>
