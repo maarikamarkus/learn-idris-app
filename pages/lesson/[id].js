@@ -40,34 +40,38 @@ export default function Lesson({ lessonData }) {
   });
 
   return (
-    <div className="container" class="flex flex-row items-stretch h-screen">
+    <div className={'flex flex-col h-screen'}>
+      <div className={'flex flex-row grow'}>
+        <div id='material' className={'basis-1/3'}>
+          <article>
+            <div dangerouslySetInnerHTML={{__html: lessonData.contentHtml}} />
+          </article>
+        </div>
       
-      <div id="material" class="basis-1/3">
-        <article>
-          <div dangerouslySetInnerHTML={{__html: lessonData.contentHtml}} />
-        </article>
+        <div id='editor' className={'relative basis-1/3'}>
+          <div className={'flask-ref-root'} ref={root} ></div>
+        </div>
+      
+        <div id='repl' className={'basis-1/3'}>
+          <pre className={'command-line'} data-user='Idris' data-host='Idris' data-prompt='bash'>
+            <code>**siia tuleb REPL/terminal**</code>
+          </pre>
+        </div>
+      
       </div>
 
-      <div id='editor' class='flex relative basis-1/3'>
-        <div class=''>
-          <div className='match-braces' ref={root} class=''></div>
+      <div className={'flex flex-row space-x-3 p-3 justify-end z-50 shadow-[0_-15px_30px_-25px_rgba(0,0,0,0.3)] border-solid border border-slate-200'}>
+        <div className={'btn'}>
+          Käivita
         </div>
-        <div class='bg-sky-100 text-blue-600 rounded p-3 absolute self-end'>
-          Testimise nupp
+        <div className={'btn'}>
+          Eelmine teema
+        </div>
+        <div className={'btn'}>
+          Järgmine teema
         </div>
       </div>
-
-      {/*<div class='basis-1/3'>
-        <div class='justify-self-end self-end px-3'>
-          <button>Testi</button>
-        </div>
-      </div>*/}
-
-      <div id="repl" class='basis-1/3'>
-        <pre className='command-line' data-user='Idris' data-host='Idris' data-promt='bash'>
-          <code>**siia tuleb REPL/terminal**</code>
-        </pre>
-      </div>
+    
     </div>
     
   )

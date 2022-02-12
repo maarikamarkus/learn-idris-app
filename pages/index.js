@@ -3,8 +3,6 @@ import styles from '../styles/Home.module.css'
 import Link from 'next/link'
 import { getLessonsData } from '../lib/lessons';
 
-//const lessons = await getLessonsData();
-
 export async function getStaticProps() {
   const lessons = await getLessonsData();
   return {
@@ -28,11 +26,11 @@ export default function Home({ lessons }) {
           Siin lehel saad teha algust funktsionaalprogrammeerimise ja -keele Idrisega!
         </h1>
 
-        <div class="grid gap-4 grid-cols-3">
+        <div className={"grid gap-4 grid-cols-3"}>
           {lessons.map((lesson, idx) => (
-            <Link href={`/lesson/${lesson.id}`}>
+            <Link href={`/lesson/${lesson.id}`} key={idx}>
               
-              <a className="lessonLink" class="bg-sky-100 rounded px-3 hover:bg-sky-200">
+              <a className={"lessonLink bg-sky-100 rounded px-3 hover:bg-sky-200"}>
                 {lesson.title}
               </a>
 
