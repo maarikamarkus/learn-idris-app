@@ -20,5 +20,7 @@ ENV PATH="/root/.idris2/bin:${PATH}"
 
 COPY ./evaluate.sh .
 
+RUN chmod u+x evaluate.sh
+
 CMD ./evaluate.sh
  
