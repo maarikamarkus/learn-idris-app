@@ -1,15 +1,14 @@
-group:
-  function: sumInt
-  test:
-    - parameters: 3
-      output: 6
-    - parameters: 2
-      output: 3
+groups:
+  - function: sumInt
+    test:
+      - parameters: 3
+        output: 6
+      - parameters: 2
+        output: 3
 
-group:
-  function: fst
-  test:
-    - parameters: (1, 2)
-      output: 1
-    - parameters: ("tere", "head aega")
-      output: "tere"
+  - function: first
+    test:
+      - parameters: (1, 2)
+        output: 1
+      - parameters: ("tere", "head aega")
+        output: "tere"
