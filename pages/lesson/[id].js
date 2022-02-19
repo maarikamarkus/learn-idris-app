@@ -22,11 +22,11 @@ export async function getStaticPaths() {
 export default function Lesson({ lessonData }) {
   const codeflask = useRef();
   const root = useRef(null);
-  const [val, setVal] = useState('');
+  const [replOutput, setReplOutput] = useState('');
 
   useEffect(async () => {
     if (typeof window !== undefined && codeflask.current !== null) {
-      const CodeFlask = await require('codeflask');
+      const CodeFlask = require('codeflask');
       codeflask.current = new CodeFlask.default(
         root.current, 
         { 
@@ -35,13 +35,12 @@ export default function Lesson({ lessonData }) {
         });
       codeflask.current.addLanguage('idris', Prism.languages['idris']);
       codeflask.current.updateCode(
-        `fst : (a, b) -> a\nfst (x, _) = x\n\nsumInt : Int -> Int\nsumInt 0 = 0\nsumInt n = sumInt (n-1) + n`)
+        `first : (a, b) -> a\nfirst (x, _) = x\n\nsumInt : Int -> Int\nsumInt 0 = 0\nsumInt n = sumInt (n-1) + n`)
     } 
   });
 
   async function runCode() {
     const code = codeflask.current.getCode();
-    //console.log(code);
 
     const res = await fetch('/api/run', {
       method: 'POST',
@@ -54,6 +53,7 @@ export default function Lesson({ lessonData }) {
       }),
     });
 
+    setReplOutput(await res.text());
   }
 
   return (
@@ -69,10 +69,8 @@ export default function Lesson({ lessonData }) {
           <div className={'flask-ref-root'} ref={root} ></div>
         </div>
       
-        <div id='repl' className={'basis-1/3'}>
-          <pre className={'command-line'} data-user='Idris' data-host='Idris' data-prompt='bash'>
-            <code>**siia tuleb REPL/terminal**</code>
-          </pre>
+        <div id='repl' className={'command-line w-1/3'}>
+          <code className={'whitespace-normal'}>{replOutput}</code>
         </div>
       
       </div>
