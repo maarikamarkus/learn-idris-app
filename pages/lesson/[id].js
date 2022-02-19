@@ -70,7 +70,7 @@ export default function Lesson({ lessonData }) {
         </div>
       
         <div id='repl' className={'command-line w-1/3'}>
-          <code className={'whitespace-normal'}>{replOutput}</code>
+          <code className={'whitespace-normal'} dangerouslySetInnerHTML={{ __html: replOutput }}></code>
         </div>
       
       </div>

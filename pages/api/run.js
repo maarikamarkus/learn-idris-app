@@ -1,3 +1,4 @@
+import { formatTerminalOutput } from '../../lib/format-terminal';
 
 const fs = require('fs/promises');
 const { exec } = require('child_process');
@@ -14,10 +15,8 @@ export default async function handler(req, res) {
   // jooksutada dockerit koos eelnevalt loodud testkoodiga
   // TODO: uuri dockerode vms, mis dockeriga suhelda aitab
   const docker = exec('docker run -i idris', (err, stdout, stderr) => {
-    console.log(stdout);
-    console.log(stderr);
-
-    res.status(200).send(stdout + "\n" + stderr);
+    const output = formatTerminalOutput(`${stdout}\n${stderr}`);
+    res.status(200).send(output);
   });
   docker.stdin.write(testCode, () => {
     docker.stdin.end();

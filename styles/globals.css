@@ -32,8 +32,19 @@ a {
 }
 
 #repl {
-  background-color: black;
-  color: white;
+  background-color: #282c34;
+  color: #abb2bf;
   padding-left: 10px;
 }
 
+.red {
+  color: #d46c75;
+}
+
+.purple {
+  color: #bc78d2;
+}
+
+.blue {
+  color: #61a3bf;
+}
