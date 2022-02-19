@@ -1,33 +1,23 @@
 
-// TODO: test if that works
-const fs = require('fs');
+const fs = require('fs/promises');
 const { exec } = require('child_process');
+const yaml = require('js-yaml');
 
-export default function handler(req, res) {
-  //console.log(req.body);
-  
-  // sisendist kood
+export default async function handler(req, res) {
   const userCode = req.body.code;
   const lessonId = req.body.lessonId;
   
-  // juurde panna test case'id koos main funktsiooniga
-  // kuidas tean, millisest test failist test case'id võtta? 
-  // annan lessoni nime kaasa? ja loodan, et on sama nimega .yml _tests kaustas?
   
-  const testCases = getTestCases(lessonId);
+  //const testCases = getTestCases(lessonId);
+  const testCode = await generateTestCode(userCode, lessonId);
   
-  
-  // tekitada .idr fail --> tglt koosta sõne muutujasse
-  // TODO: kuidas js-iga faili kirjutada?
-  const testCode = userCode;
-  
-  // jooksutada dockerit koos eelnevalt loodud .idr failiga
+  // jooksutada dockerit koos eelnevalt loodud testkoodiga
   // TODO: uuri dockerode vms, mis dockeriga suhelda aitab
   const docker = exec('docker run -i idris', (err, stdout, stderr) => {
     console.log(stdout);
     console.log(stderr);
 
-    res.status(200).send("hästi:)");
+    res.status(200).send(stdout + "\n" + stderr);
   });
   docker.stdin.write(testCode, () => {
     docker.stdin.end();
@@ -48,20 +38,55 @@ export default function handler(req, res) {
   // kui kõik hästi, siis ei pea eriti midagi tegema
 }
 
-// TODO: test that fs works
-function getTestCases(lessonId) {
-  fs.readFile("_tests/" + lessonId + ".yml", "utf-8", (err, data) => {
-    if (err) {
-      // TODO: find a better way
-      console.error(err);
-      return;
-    }
-
-    return parseTestCases(data);
-  });
+async function getTestCases(lessonId) {
+  return fs.readFile("_tests/" + lessonId + ".yml", "utf-8");
 }
 
 function parseTestCases(data) {
-  // TODO: otsi mõni teek, millega yml parsida
-  return data;
+  const testCases = [];
+
+  try {
+    const doc = yaml.load(data);
+
+    for (const group of doc.groups) {
+      const funName = group.function;
+
+      for (const testCase of group.test) {
+        const input = testCase.parameters;
+        const output = testCase.output;
+
+        testCases.push({funName, input, output});
+      }
+    }
+
+  } catch (e) {
+    console.log(e);
+  }
+
+  return testCases;
+}
+
+async function generateTestCode(userCode, lessonId) {
+  const data = await getTestCases(lessonId);
+
+  let testCode = `${userCode}\n\nmain : IO ()\nmain = do\n`;
+
+  try {
+    const doc = yaml.load(data);
+
+    for (const group of doc.groups) {
+      const funName = group.function;
+
+      for (const testCase of group.test) {
+        const input = testCase.parameters;
+
+        testCode += `\tputStrLn (\"${funName} \" ++ show (${funName} ${input}))\n`;
+      }
+    }
+
+  } catch (e) {
+    console.log(e);
+  }
+
+  return testCode;
 }
