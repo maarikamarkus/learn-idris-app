@@ -59,9 +59,9 @@ export default function Lesson({ lessonData }) {
   return (
     <div className={'flex flex-col h-screen'}>
       <div className={'flex flex-row grow'}>
-        <div id='material' className={'basis-1/3'}>
+        <div id='material' className={'basis-1/3 pt-5 ml-3'}>
           <article>
-            <div dangerouslySetInnerHTML={{__html: lessonData.contentHtml}} />
+            <div className={'prose prose-slate '} dangerouslySetInnerHTML={{ __html: lessonData.contentHtml }} />
           </article>
         </div>
       
