@@ -35,7 +35,7 @@ export async function getStaticPaths() {
 export default function Lesson({ lessonData }) {
   const codeflask = useRef();
   const root = useRef(null);
-  const [replOutput, setReplOutput] = useState('');
+  const [results, setResults] = useState([]);
 
   useEffect(async () => {
     if (typeof window !== 'undefined' && codeflask.current !== null) {
@@ -48,7 +48,7 @@ export default function Lesson({ lessonData }) {
         });
       codeflask.current.addLanguage('idris', Prism.languages['idris']);
       codeflask.current.updateCode(
-        `first : (a, b) -> a\nfirst (x, _) = x\n\nsumInt : Int -> Int\nsumInt 0 = 0\nsumInt n = sumInt (n-1) + n`)
+        `first : (a, b) -> a\nfirst (x, _) = x\n\nsumInt : Int -> Int\nsumInt 0 = 0\nsumInt n = sumInt (n-1) + n + 1`)
     } 
   });
 
@@ -66,7 +66,7 @@ export default function Lesson({ lessonData }) {
       }),
     });
 
-    setReplOutput(await res.text());
+    setResults(await res.json());
   }
 
   return (
@@ -86,7 +86,7 @@ export default function Lesson({ lessonData }) {
 
         <div>
 
-          {testResults.map((result, idx) => 
+          {results.map((result, idx) => 
             result.passed
             ? (
               <div className={"accordion-item bg-white border border-gray-200"}>
@@ -108,9 +108,7 @@ export default function Lesson({ lessonData }) {
                   </button>
                 </h2>
                 <div id={`collapse-${idx}`} className={"accordion-collapse collapse"} aria-labelledby={`heading-${idx}`}>
-                  <div className={"accordion-body py-4 px-5"}>
-                    {result.content}
-                  </div>
+                  <div className={"accordion-body py-4 px-5"} dangerouslySetInnerHTML={{ __html: result.content }}></div>
                 </div>
               </div>
             )
