@@ -11,4 +11,4 @@ groups:
       - parameters: (1, 2)
         output: 1
       - parameters: ("tere", "head aega")
-        output: "tere"
+        output: '"tere"'
