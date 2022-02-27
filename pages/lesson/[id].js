@@ -84,48 +84,45 @@ export default function Lesson({ lessonData }) {
       
         <div className={'w-1/3 p-5'}>
 
-        <div>
+          <div className={'font-mono'}>
 
-          {results.map((result, idx) => 
-            result.passed
-            ? (
-              <div className={"accordion-item bg-white border border-gray-200"}>
-                <h2 className={"accordion-header mb-0"}>
-                  <div className={'accordion-row collapsed'}>
-                    <span className={'green font-bold mr-2'}>✓</span>
-                    {result.funName}
-                  </div>
-                </h2>
-              </div>
-            )
-            : (
-              <div className={"accordion-item bg-white border border-gray-200"}>
-                <h2 className={"accordion-header mb-0"} id={`heading-${idx}`}>
-                  <button className={'accordion-btn collapsed'} type="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${idx}`} aria-expanded="false"
-                    aria-controls={`collapse-${idx}`}>
-                    <span className={'red font-bold mr-2'}>✗</span>
-                    {result.funName}
-                  </button>
-                </h2>
-                <div id={`collapse-${idx}`} className={"accordion-collapse collapse"} aria-labelledby={`heading-${idx}`}>
-                  <div className={"accordion-body py-4 px-5"} dangerouslySetInnerHTML={{ __html: result.content }}></div>
+            {results.map((result, idx) => 
+              result.passed
+              ? (
+                <div className={"accordion-item bg-white border border-gray-200"}>
+                  <h2 className={"accordion-header mb-0"}>
+                    <div className={'accordion-row collapsed'}>
+                      <span className={'green font-bold mr-2'}>✓</span>
+                      {result.funName}
+                    </div>
+                  </h2>
                 </div>
-              </div>
-            )
-          )}
+              )
+              : (
+                <div className={"accordion-item bg-white border border-gray-200"}>
+                  <h2 className={"accordion-header mb-0"} id={`heading-${idx}`}>
+                    <button className={'accordion-btn collapsed'} type="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${idx}`} aria-expanded="false"
+                      aria-controls={`collapse-${idx}`}>
+                      <span className={'red font-bold mr-2'}>✗</span>
+                      {result.funName}
+                    </button>
+                  </h2>
+                  <div id={`collapse-${idx}`} className={"accordion-collapse collapse"} aria-labelledby={`heading-${idx}`}>
+                    <div className={"accordion-body py-4 px-5"} dangerouslySetInnerHTML={{ __html: result.content }}></div>
+                  </div>
+                </div>
+              )
+            )}
 
-        </div>
+          </div>
 
-          {/*<div id='repl' className={'command-line rounded w-full h-[200px] mt-10'}>
-            <code className={'whitespace-normal'} dangerouslySetInnerHTML={{ __html: replOutput }}></code>
-          </div>*/}
         </div>
       
       </div>
 
       <div className={'footer'}>
         <div className={'btn'} onClick={runCode}>
-          Käivita
+          Kontrolli
         </div>
     
         <div className={'btn'}>

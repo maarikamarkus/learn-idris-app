@@ -27,6 +27,12 @@
   @apply accordion-button relative flex items-center w-full py-4 px-5 text-base text-gray-800 text-left bg-white border-0 rounded-none transition focus:outline-none;
 }
 
+.accordion-body,
+.accordion-body span,
+.accordion-body b {
+  white-space: pre-wrap;
+}
+
 html,
 body {
   padding: 0;

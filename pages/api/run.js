@@ -21,9 +21,21 @@ export default async function handler(req, res) {
       const input = testCase.parameters;
       const testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\tputStrLn (show (${funName} ${input}))\n`;
 
-      const result = await runTestWithDocker(testCode);
-      const match = result.match(new RegExp(`^${checkCompilePassText}\n(.*)`, 's'));
-      console.log(match);
+      let result;
+      try {
+        result = await runTestWithDocker(testCode);
+      } catch (e) {
+        console.log(e);
+        testResults.push({
+          funName,
+          passed: false,
+          content: formatTerminalOutput(e)
+        });
+        continue;
+      } 
+      
+      const match = result.match(new RegExp(`${checkCompilePassText}\n(.*)`, 's'));
+      //console.log(match);
       
       if (match === null) {
         testResults.push({
@@ -59,12 +71,12 @@ export default async function handler(req, res) {
 async function runTestWithDocker(test) {
   return new Promise((resolve, reject) => {
     const docker = exec('docker run -i idris', (err, stdout, stderr) => {
+      const output = `${stdout}\n${stderr}`;
+
       if (err) {
-        reject(err);
+        reject(output);
         return;
       }
-
-      const output = `${stdout}\n${stderr}`;
       
       resolve(output);
     });
