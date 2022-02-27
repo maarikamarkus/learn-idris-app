@@ -5,7 +5,6 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./node_modules/tw-elements/dist/js/**/*.js"
   ],
-  // content: ['apps/site/pages/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {},
   },

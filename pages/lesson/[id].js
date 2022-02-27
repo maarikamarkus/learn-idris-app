@@ -74,7 +74,7 @@ export default function Lesson({ lessonData }) {
       <div className={'flex flex-row grow'}>
         <div id='material' className={'basis-1/3 pt-5 ml-3'}>
           <article>
-            <div className={'prose'} dangerouslySetInnerHTML={{ __html: lessonData.contentHtml }} />
+            <div className={'prose prose-code:before:content-none prose-code:after:content-none'} dangerouslySetInnerHTML={{ __html: lessonData.contentHtml }} />
           </article>
         </div>
       
