@@ -50,16 +50,6 @@ a {
   box-sizing: border-box;
 }
 
-#material {
-  padding-left: 10px;
-}
-
-#repl {
-  background-color: #282c34;
-  color: #abb2bf;
-  padding-left: 10px;
-}
-
 .red {
   color: #d46c75;
 }

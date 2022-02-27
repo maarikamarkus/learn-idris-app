@@ -72,7 +72,7 @@ export default function Lesson({ lessonData }) {
   return (
     <div className={'flex flex-col h-screen'}>
       <div className={'flex flex-row grow'}>
-        <div id='material' className={'basis-1/3 pt-5 ml-3'}>
+        <div id='material' className={'basis-1/3 p-5 bg-[#F6F5F5]'}>
           <article>
             <div className={'prose prose-code:before:content-none prose-code:after:content-none'} dangerouslySetInnerHTML={{ __html: lessonData.contentHtml }} />
           </article>
@@ -82,7 +82,7 @@ export default function Lesson({ lessonData }) {
           <div className={'flask-ref-root'} ref={root} ></div>
         </div>
       
-        <div className={'w-1/3 p-5'}>
+        <div className={'w-1/3 p-5 bg-[#F6F5F5]'}>
 
           <div className={'font-mono'}>
 
