@@ -65,6 +65,7 @@ export default function Lesson({ lessonData }) {
         lessonId: lessonData.id,
       }),
     });
+    
     setResults(await res.json());
     localStorage.setItem(lessonData.id, results.lessonPassed);
   }
