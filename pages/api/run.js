@@ -1,4 +1,3 @@
-import { test } from 'gray-matter';
 import { formatTerminalOutput } from '../../lib/format-terminal';
 
 const fs = require('fs/promises');
@@ -25,7 +24,6 @@ export default async function handler(req, res) {
       try {
         result = await runTestWithDocker(testCode);
       } catch (e) {
-        console.log(e);
         testResults.push({
           funName,
           passed: false,
@@ -35,7 +33,6 @@ export default async function handler(req, res) {
       } 
       
       const match = result.match(new RegExp(`${checkCompilePassText}\n(.*)`, 's'));
-      //console.log(match);
       
       if (match === null) {
         testResults.push({
@@ -64,8 +61,9 @@ export default async function handler(req, res) {
       }
     }
   }
-
-  res.status(200).send(testResults);
+  
+  const lessonPassed = testResults.every(({ passed }) => passed);
+  res.status(200).send({testResults, lessonPassed});
 }
 
 async function runTestWithDocker(test) {
