@@ -35,7 +35,7 @@ export async function getStaticPaths() {
 export default function Lesson({ lessonData }) {
   const codeflask = useRef();
   const root = useRef(null);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState({testResults: [], lessonPassed: false});
 
   useEffect(async () => {
     if (typeof window !== 'undefined' && codeflask.current !== null) {
@@ -65,8 +65,8 @@ export default function Lesson({ lessonData }) {
         lessonId: lessonData.id,
       }),
     });
-
     setResults(await res.json());
+    localStorage.setItem(lessonData.id, results.lessonPassed);
   }
 
   return (
@@ -86,7 +86,7 @@ export default function Lesson({ lessonData }) {
 
           <div className={'font-mono'}>
 
-            {results.map((result, idx) => 
+            {results.testResults.map((result, idx) => 
               result.passed
               ? (
                 <div className={"accordion-item bg-white border border-gray-200"}>
