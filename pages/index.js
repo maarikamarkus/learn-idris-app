@@ -27,15 +27,30 @@ export default function Home({ lessons }) {
         </h1>
 
         <div className={"grid gap-4 grid-cols-3"}>
-          {lessons.map((lesson, idx) => (
-            <Link href={`/lesson/${lesson.id}`} key={idx}>
-              
-              <a className={"lesson-link"}>
-                {lesson.title}
-              </a>
+          {lessons.map((lesson, idx) => { 
+            const lessonPassed = (typeof window !== 'undefined') ? localStorage.getItem(lesson.id) ?? false : false;
 
-            </Link>
-          ))}
+            return lessonPassed
+            ? (
+              <Link href={`/lesson/${lesson.id}`} key={idx}>
+                
+                <a className={"lesson-link"}>
+                  {`✓ ${lesson.title}`}
+                </a>
+
+              </Link>
+            )
+            : (
+              <Link href={`/lesson/${lesson.id}`} key={idx}>
+                
+                <a className={"lesson-link"}>
+                  {lesson.title}
+                </a>
+
+              </Link>
+            )
+              
+          })}
         </div>
        
       </main>
