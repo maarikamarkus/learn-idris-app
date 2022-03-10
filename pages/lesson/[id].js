@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { getAllLessonIds, getLessonData } from '../../lib/lessons';
+import { getAllLessonIds, getLessonCode, getLessonData } from '../../lib/lessons';
 import Prism from 'prismjs';
 
 
@@ -17,9 +17,11 @@ const testResults = [
 
 export async function getStaticProps({ params }) {
   const lessonData = await getLessonData(params.id);
+  const lessonCode = await getLessonCode(params.id);
   return {
     props: {
-      lessonData
+      lessonData,
+      lessonCode
     }
   };
 }
@@ -32,7 +34,7 @@ export async function getStaticPaths() {
   };
 }
 
-export default function Lesson({ lessonData }) {
+export default function Lesson({ lessonData, lessonCode }) {
   const codeflask = useRef();
   const root = useRef(null);
   const [results, setResults] = useState({testResults: [], lessonPassed: false});
@@ -47,8 +49,7 @@ export default function Lesson({ lessonData }) {
           lineNumbers: true
         });
       codeflask.current.addLanguage('idris', Prism.languages['idris']);
-      codeflask.current.updateCode(
-        `first : (a, b) -> a\nfirst (x, _) = x\n\nsumInt : Int -> Int\nsumInt 0 = 0\nsumInt n = sumInt (n-1) + n + 1`)
+      codeflask.current.updateCode(lessonCode);
     } 
   });
 
