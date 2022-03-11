@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getAllLessonIds, getLessonCode, getLessonData } from '../../lib/lessons';
 import Prism from 'prismjs';
-
+import { useRouter} from 'next/router';
 
 const testResults = [
   {
@@ -18,10 +18,13 @@ const testResults = [
 export async function getStaticProps({ params }) {
   const lessonData = await getLessonData(params.id);
   const lessonCode = await getLessonCode(params.id);
+  const allLessonIds = getAllLessonIds().map(x => x.params.id);
+  
   return {
     props: {
       lessonData,
-      lessonCode
+      lessonCode,
+      allLessonIds,
     }
   };
 }
@@ -34,7 +37,8 @@ export async function getStaticPaths() {
   };
 }
 
-export default function Lesson({ lessonData, lessonCode }) {
+export default function Lesson({ lessonData, lessonCode, allLessonIds }) {
+  const router = useRouter();
   const codeflask = useRef();
   const root = useRef(null);
   const [results, setResults] = useState({testResults: [], lessonPassed: false});
@@ -69,6 +73,38 @@ export default function Lesson({ lessonData, lessonCode }) {
     
     setResults(await res.json());
     localStorage.setItem(lessonData.id, results.lessonPassed);
+  }
+
+  async function prevLesson() {
+    const prevLessonId = getPrevLessonId(lessonData.id);
+    if (lessonExists(prevLessonId)) {
+      router.push(`/lesson/${prevLessonId}`);
+    } else {
+      router.push('/');
+    }
+  }
+
+  async function nextLesson() {
+    const nextLessonId = getNextLessonId(lessonData.id)
+    if (lessonExists(nextLessonId)) {
+      router.push(`/lesson/${nextLessonId}`);
+    } else {
+      router.push('/');
+    }
+  }
+
+  function lessonExists(lessonId) {
+    return allLessonIds.includes(lessonId);
+  }
+  
+  function getNextLessonId(curLessonId) {
+    const curLessonIdx = allLessonIds.indexOf(curLessonId);
+    return allLessonIds[curLessonIdx + 1];
+  }
+  
+  function getPrevLessonId(curLessonId) {
+    const curLessonIdx = allLessonIds.indexOf(curLessonId);
+    return allLessonIds[curLessonIdx - 1];
   }
 
   return (
@@ -127,11 +163,11 @@ export default function Lesson({ lessonData, lessonCode }) {
           Kontrolli
         </div>
     
-        <div className={'btn'}>
+        <div className={'btn'} onClick={prevLesson}>
           Eelmine teema
         </div>
     
-        <div className={'btn'}>
+        <div className={'btn'} onClick={nextLesson}>
           Järgmine teema
         </div>
       </div>
