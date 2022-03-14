@@ -17,14 +17,18 @@ const testResults = [
 
 export async function getStaticProps({ params }) {
   const lessonData = await getLessonData(params.id);
-  const lessonCode = await getLessonCode(params.id);
   const allLessonIds = getAllLessonIds().map(x => x.params.id);
+  
+  const initialState = {};
+  for (const lessonId of allLessonIds) {
+    initialState[lessonId] = {testResults: [], lessonPassed: false, userCode: await getLessonCode(lessonId)};
+  }
   
   return {
     props: {
       lessonData,
-      lessonCode,
       allLessonIds,
+      initialState,
     }
   };
 }
@@ -37,11 +41,12 @@ export async function getStaticPaths() {
   };
 }
 
-export default function Lesson({ lessonData, lessonCode, allLessonIds }) {
+export default function Lesson({ lessonData, allLessonIds, initialState }) {
   const router = useRouter();
   const codeflask = useRef();
   const root = useRef(null);
-  const [results, setResults] = useState({testResults: [], lessonPassed: false});
+
+  const [state, setState] = useState(initialState);
 
   useEffect(async () => {
     if (typeof window !== 'undefined' && codeflask.current !== null) {
@@ -53,9 +58,18 @@ export default function Lesson({ lessonData, lessonCode, allLessonIds }) {
           lineNumbers: true
         });
       codeflask.current.addLanguage('idris', Prism.languages['idris']);
-      codeflask.current.updateCode(lessonCode);
+      codeflask.current.updateCode(state[lessonData.id].userCode);
+      codeflask.current.onUpdate((code) => {
+        setState({
+          ...state,
+          [lessonData.id]: {
+            ...state[lessonData.id],
+            userCode: code
+          }
+        });
+      });
     } 
-  });
+  }, [lessonData.id]);
 
   async function runCode() {
     const code = codeflask.current.getCode();
@@ -71,8 +85,16 @@ export default function Lesson({ lessonData, lessonCode, allLessonIds }) {
       }),
     });
     
-    setResults(await res.json());
-    localStorage.setItem(lessonData.id, results.lessonPassed);
+
+    const lessonResults = await res.json();
+    setState({
+      ...state,
+      [lessonData.id]: {
+        ...state[lessonData.id],
+        testResults: lessonResults.testResults,
+      }
+    });
+    localStorage.setItem(lessonData.id, lessonResults.lessonPassed);
   }
 
   async function prevLesson() {
@@ -124,7 +146,7 @@ export default function Lesson({ lessonData, lessonCode, allLessonIds }) {
 
           <div className={'font-mono'}>
 
-            {results.testResults.map((result, idx) => 
+            {state[lessonData.id].testResults.map((result, idx) => 
               result.passed
               ? (
                 <div className={"accordion-item bg-white border border-gray-200"}>
