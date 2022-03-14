@@ -27,8 +27,9 @@ export default function Home({ lessons }) {
         </h1>
 
         <div className={"grid gap-4 grid-cols-3"}>
-          {lessons.map((lesson, idx) => { 
-            const lessonPassed = (typeof window !== 'undefined') ? localStorage.getItem(lesson.id) ?? false : false;
+          {lessons.map((lesson, idx) => {
+            const lessonData = (typeof window !== 'undefined') ? localStorage.getItem(lesson.id) : null;
+            const lessonPassed = (lessonData !== null) ? JSON.parse(lessonData).lessonPassed : false;
 
             return lessonPassed
             ? (
