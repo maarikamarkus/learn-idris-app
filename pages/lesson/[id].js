@@ -4,18 +4,6 @@ import Prism from 'prismjs';
 import { useRouter} from 'next/router';
 import { getLessonDataFromLocalStorage } from '../../lib/localStorageUtil';
 
-const testResults = [
-  {
-    'funName': 'first',
-    'passed': true,
-  },
-  {
-    'funName': 'sumInt',
-    'passed': false,
-    'content': 'pahasti läks :(',
-  }
-];
-
 export async function getStaticProps({ params }) {
   const lessonData = await getLessonData(params.id);
   const allLessonIds = getAllLessonIds().map(x => x.params.id);
