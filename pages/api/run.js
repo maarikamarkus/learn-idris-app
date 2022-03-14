@@ -68,7 +68,7 @@ export default async function handler(req, res) {
 
 async function runTestWithDocker(test) {
   return new Promise((resolve, reject) => {
-    const docker = exec('docker run -i idris', (err, stdout, stderr) => {
+    const docker = exec('docker run --rm -i idris', (err, stdout, stderr) => {
       const output = `${stdout}\n${stderr}`;
 
       if (err) {
