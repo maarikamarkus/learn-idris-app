@@ -2,6 +2,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
 import { getLessonsData } from '../lib/lessons';
+import { getLessonDataFromLocalStorage } from '../lib/localStorageUtil';
 
 export async function getStaticProps() {
   const lessons = await getLessonsData();
@@ -28,8 +29,9 @@ export default function Home({ lessons }) {
 
         <div className={"grid gap-4 grid-cols-3"}>
           {lessons.map((lesson, idx) => {
-            const lessonData = (typeof window !== 'undefined') ? localStorage.getItem(lesson.id) : null;
-            const lessonPassed = (lessonData !== null) ? JSON.parse(lessonData).lessonPassed : false;
+            
+            const lessonData = getLessonDataFromLocalStorage(lesson.id);
+            const lessonPassed = lessonData !== null ? lessonData.lessonPassed : false;
 
             return lessonPassed
             ? (

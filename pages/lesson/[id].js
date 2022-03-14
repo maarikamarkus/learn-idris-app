@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { getAllLessonIds, getLessonCode, getLessonData } from '../../lib/lessons';
 import Prism from 'prismjs';
 import { useRouter} from 'next/router';
+import { getLessonDataFromLocalStorage } from '../../lib/localStorageUtil';
 
 const testResults = [
   {
@@ -82,11 +83,13 @@ export default function Lesson({ lessonData, allLessonIds, allLessonsCode }) {
     function getInitialState() {
       const initialState = {};
       for (const lessonId of allLessonIds) {
-        const lessonDataFromLocalStorage = typeof window !== 'undefined' ? localStorage.getItem(lessonId) : null;
+        const lessonDataFromLocalStorage = getLessonDataFromLocalStorage(lessonId);
     
-        const testResults = lessonDataFromLocalStorage !== null ? JSON.parse(lessonDataFromLocalStorage).testResults ?? [] : []
-        const lessonPassed = lessonDataFromLocalStorage !== null ? JSON.parse(lessonDataFromLocalStorage).lessonPassed ?? false : false;
-        const userCode = lessonDataFromLocalStorage !== null ? JSON.parse(lessonDataFromLocalStorage).userCode ?? allLessonsCode[lessonId] : allLessonsCode[lessonId];
+        const testResults = lessonDataFromLocalStorage !== null ? lessonDataFromLocalStorage.testResults ?? [] : []
+        const lessonPassed = lessonDataFromLocalStorage !== null ? lessonDataFromLocalStorage.lessonPassed ?? false : false;
+        const userCode = lessonDataFromLocalStorage !== null 
+          ? lessonDataFromLocalStorage.userCode ?? allLessonsCode[lessonId] 
+          : allLessonsCode[lessonId];
     
         initialState[lessonId] = {
           testResults, 
