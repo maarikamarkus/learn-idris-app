@@ -18,17 +18,17 @@ const testResults = [
 export async function getStaticProps({ params }) {
   const lessonData = await getLessonData(params.id);
   const allLessonIds = getAllLessonIds().map(x => x.params.id);
+  const allLessonsCode = {};
   
-  const initialState = {};
   for (const lessonId of allLessonIds) {
-    initialState[lessonId] = {testResults: [], lessonPassed: false, userCode: await getLessonCode(lessonId)};
+    allLessonsCode[lessonId] = await getLessonCode(lessonId);
   }
   
   return {
     props: {
       lessonData,
       allLessonIds,
-      initialState,
+      allLessonsCode
     }
   };
 }
@@ -41,13 +41,15 @@ export async function getStaticPaths() {
   };
 }
 
-export default function Lesson({ lessonData, allLessonIds, initialState }) {
+
+export default function Lesson({ lessonData, allLessonIds, allLessonsCode }) {
+  const lessonId = lessonData.id;
   const router = useRouter();
   const codeflask = useRef();
   const root = useRef(null);
-
-  const [state, setState] = useState(initialState);
-
+  
+  const [state, setState] = useState(getInitialState());
+  
   useEffect(async () => {
     if (typeof window !== 'undefined' && codeflask.current !== null) {
       const CodeFlask = require('codeflask');
@@ -55,21 +57,46 @@ export default function Lesson({ lessonData, allLessonIds, initialState }) {
         root.current, 
         { 
           language: 'idris',
-          lineNumbers: true
+          lineNumbers: true,
         });
-      codeflask.current.addLanguage('idris', Prism.languages['idris']);
-      codeflask.current.updateCode(state[lessonData.id].userCode);
-      codeflask.current.onUpdate((code) => {
-        setState({
-          ...state,
-          [lessonData.id]: {
-            ...state[lessonData.id],
-            userCode: code
-          }
+        codeflask.current.addLanguage('idris', Prism.languages['idris']);
+        
+        codeflask.current.updateCode(state[lessonId].userCode);
+        codeflask.current.onUpdate((code) => {
+          setState({
+            ...state,
+            [lessonId]: {
+              ...state[lessonId],
+              userCode: code,
+            },
+          });
+          
+          localStorage.setItem(lessonId, JSON.stringify({
+            ...JSON.parse(localStorage.getItem(lessonId)),
+            userCode: code,
+          }));
         });
-      });
-    } 
-  }, [lessonData.id]);
+      } 
+    }, [lessonId, state[lessonId].testResults]);
+    
+    function getInitialState() {
+      const initialState = {};
+      for (const lessonId of allLessonIds) {
+        const lessonDataFromLocalStorage = typeof window !== 'undefined' ? localStorage.getItem(lessonId) : null;
+    
+        const testResults = lessonDataFromLocalStorage !== null ? JSON.parse(lessonDataFromLocalStorage).testResults ?? [] : []
+        const lessonPassed = lessonDataFromLocalStorage !== null ? JSON.parse(lessonDataFromLocalStorage).lessonPassed ?? false : false;
+        const userCode = lessonDataFromLocalStorage !== null ? JSON.parse(lessonDataFromLocalStorage).userCode ?? allLessonsCode[lessonId] : allLessonsCode[lessonId];
+    
+        initialState[lessonId] = {
+          testResults, 
+          lessonPassed, 
+          userCode, 
+        };
+      }
+    
+      return initialState;
+    }
 
   async function runCode() {
     const code = codeflask.current.getCode();
@@ -81,24 +108,25 @@ export default function Lesson({ lessonData, allLessonIds, initialState }) {
       },
       body: JSON.stringify({
         code,
-        lessonId: lessonData.id,
+        lessonId: lessonId,
       }),
     });
     
 
     const lessonResults = await res.json();
-    setState({
+    const newState = {
       ...state,
-      [lessonData.id]: {
-        ...state[lessonData.id],
-        testResults: lessonResults.testResults,
+      [lessonId]: {
+        ...state[lessonId],
+        ...lessonResults,
       }
-    });
-    localStorage.setItem(lessonData.id, lessonResults.lessonPassed);
+    };
+    setState(newState);
+    localStorage.setItem(lessonId, JSON.stringify(newState[lessonId]));
   }
 
   async function prevLesson() {
-    const prevLessonId = getPrevLessonId(lessonData.id);
+    const prevLessonId = getPrevLessonId(lessonId);
     if (lessonExists(prevLessonId)) {
       router.push(`/lesson/${prevLessonId}`);
     } else {
@@ -107,7 +135,7 @@ export default function Lesson({ lessonData, allLessonIds, initialState }) {
   }
 
   async function nextLesson() {
-    const nextLessonId = getNextLessonId(lessonData.id)
+    const nextLessonId = getNextLessonId(lessonId)
     if (lessonExists(nextLessonId)) {
       router.push(`/lesson/${nextLessonId}`);
     } else {
@@ -146,7 +174,7 @@ export default function Lesson({ lessonData, allLessonIds, initialState }) {
 
           <div className={'font-mono'}>
 
-            {state[lessonData.id].testResults.map((result, idx) => 
+            {state[lessonId].testResults.map((result, idx) => 
               result.passed
               ? (
                 <div className={"accordion-item bg-white border border-gray-200"}>
