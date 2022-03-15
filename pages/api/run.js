@@ -51,7 +51,7 @@ export default async function handler(req, res) {
           passed: true
         });
       } else {
-        const feedback = `Input: ${input}<br>Expected: ${expected}<br>Actual: ${actual}`
+        const feedback = `Sisend: ${input}<br>Oodatud: ${expected}<br>Tegelik: ${actual}`
 
         testResults.push({
           funName,
