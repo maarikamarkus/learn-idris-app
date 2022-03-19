@@ -1,0 +1,8 @@
+groups:
+  - function: prindiArvud
+    type: 'IO'
+    test:
+      - parameters: '[1,66,99]'
+        output: '1\n66\n99'
+      - parameters: '[]'
+        output: ''

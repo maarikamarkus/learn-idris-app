@@ -15,11 +15,12 @@ export default async function handler(req, res) {
 
   for (const group of testCases.groups) {
     const funName = group.function;
+    const funType = group.type ?? 'pure';
     
     for (const testCase of group.test) {
       const input = testCase.parameters;
-      const testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\tputStrLn (show (${funName} ${input}))\n`;
-
+      const testCode = getTestCode(userCode, funType, funName, input);
+      
       let result;
       try {
         result = await runTestWithDocker(testCode);
@@ -43,7 +44,7 @@ export default async function handler(req, res) {
         continue;
       }
       const actual = match[1].trim();
-      const expected = testCase.output;
+      const expected = testCase.output.toString().replaceAll('\\n', '\n');
       
       if (actual === expected.toString()) {
         testResults.push({
@@ -64,6 +65,16 @@ export default async function handler(req, res) {
   
   const lessonPassed = testResults.every(({ passed }) => passed);
   res.status(200).send({testResults, lessonPassed});
+}
+
+function getTestCode(userCode, funType, funName, input) {
+  let testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\t`
+  if (funType === 'pure') {
+    testCode += `putStrLn (show (${funName} ${input}))\n`;
+  } else if (funType === 'IO') {
+    testCode += `${funName} ${input}\n`;
+  }
+  return testCode;
 }
 
 async function runTestWithDocker(test) {
