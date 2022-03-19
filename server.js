@@ -1,4 +1,12 @@
-import { formatTerminalOutput } from '../../lib/format-terminal';
+//import { formatTerminalOutput } from 'lib/format-terminal';
+
+const express = require('express');
+const next = require('next');
+
+const dev = process.env.NODE_ENV !== 'production';
+const port = parseInt(process.env.PORT, 10) || 3000;
+const app = next({ dev });
+const handle = app.getRequestHandler();
 
 const fs = require('fs/promises');
 const { exec } = require('child_process');
@@ -6,9 +14,37 @@ const yaml = require('js-yaml');
 const pool = require('generic-pool');
 
 const checkCompilePassText = "Learn Idris App test result:";
-const myPool = createContainerPool();
+const formatTerminalOutput = require('./lib/format-terminal.js');
 
-export default async function handler(req, res) {
+
+app.prepare().then(() => {
+  const server = express();
+  const myPool = createContainerPool();
+  
+  server.use(express.json());
+  //server.use(express.urlencoded({ extended: true }));
+  
+  server.all('/api/run', (req, res) => {
+    console.log('server.js kutsuti');
+    return run(req, res, myPool);
+  });
+
+  server.all('*', (req, res) => {
+    return handle(req, res);
+  });
+
+  server.listen(port, (err) => {
+    if (err) {
+      console.log(err);
+      throw err;
+    }
+    console.log(`> Ready on http://localhost:${port}`);
+  });
+});
+
+
+
+async function run(req, res, myPool) {
   const userCode = req.body.code;
   const lessonId = req.body.lessonId;
 
@@ -65,7 +101,7 @@ export default async function handler(req, res) {
       }
     }
   }
-  await myPool.destroy(containerName);
+  await myPool.release(containerName);
 
   const lessonPassed = testResults.every(({ passed }) => passed);
   res.status(200).send({testResults, lessonPassed});
