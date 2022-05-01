@@ -9,6 +9,7 @@ const checkCompilePassText = "Learn Idris App test result:";
 const myPool = createContainerPool();
 
 export default async function handler(req, res) {
+  const startTimeMs = Date.now();
   const userCode = req.body.code;
   const lessonId = req.body.lessonId;
 
@@ -19,11 +20,12 @@ export default async function handler(req, res) {
   console.log('Container name: ', containerName);
   for (const group of testCases.groups) {
     const funName = group.function;
+    const funType = group.type ?? 'pure';
     
     for (const testCase of group.test) {
       const input = testCase.parameters;
-      const testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\tputStrLn (show (${funName} ${input}))\n`;
-
+      const testCode = getTestCode(userCode, funType, funName, input);
+      
       let result;
       try {
         result = await runTestWithDocker(testCode, containerName);
@@ -47,7 +49,7 @@ export default async function handler(req, res) {
         continue;
       }
       const actual = match[1].trim();
-      const expected = testCase.output;
+      const expected = testCase.output.toString().replaceAll('\\n', '\n');
       
       if (actual === expected.toString()) {
         testResults.push({
@@ -68,6 +70,8 @@ export default async function handler(req, res) {
   await myPool.destroy(containerName);
 
   const lessonPassed = testResults.every(({ passed }) => passed);
+  const execDuration = Date.now() - startTimeMs;
+  console.log(`Tests running time: ${execDuration} ms`);
   res.status(200).send({testResults, lessonPassed});
 }
 

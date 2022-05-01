@@ -3,6 +3,7 @@ import { getAllLessonIds, getLessonCode, getLessonData } from '../../lib/lessons
 import Prism from 'prismjs';
 import { useRouter} from 'next/router';
 import { getLessonDataFromLocalStorage } from '../../lib/localStorageUtil';
+import { Loading } from '../../components/loading';
 
 export async function getStaticProps({ params }) {
   const lessonData = await getLessonData(params.id);
@@ -36,6 +37,7 @@ export default function Lesson({ lessonData, allLessonIds, allLessonsCode }) {
   const router = useRouter();
   const codeflask = useRef();
   const root = useRef(null);
+  const loading = useRef();
   
   const [state, setState] = useState(getInitialState());
   
@@ -90,6 +92,7 @@ export default function Lesson({ lessonData, allLessonIds, allLessonsCode }) {
     }
 
   async function runCode() {
+    loading.current.show();
     const code = codeflask.current.getCode();
 
     const res = await fetch('/api/run', {
@@ -114,6 +117,7 @@ export default function Lesson({ lessonData, allLessonIds, allLessonsCode }) {
     };
     setState(newState);
     localStorage.setItem(lessonId, JSON.stringify(newState[lessonId]));
+    loading.current.hide();
   }
 
   async function prevLesson() {
@@ -150,6 +154,8 @@ export default function Lesson({ lessonData, allLessonIds, allLessonsCode }) {
 
   return (
     <div className={'flex flex-col h-screen'}>
+      <Loading ref={loading}></Loading>
+
       <div className={'flex flex-row grow'}>
         <div id='material' className={'basis-1/3 p-5 bg-[#F6F5F5]'}>
           <article>
