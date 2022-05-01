@@ -23,11 +23,11 @@ export default function Home({ lessons }) {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
+        <h1 className={"title"}>
           Siin lehel saad teha algust funktsionaalprogrammeerimise ja -keele Idrisega!
         </h1>
 
-        <div className={"grid gap-4 grid-cols-3"}>
+        <div className={"grid mx-10 gap-5 grid-cols-3"}>
           {lessons.map((lesson, idx) => {
             
             const lessonData = getLessonDataFromLocalStorage(lesson.id);
@@ -57,10 +57,6 @@ export default function Home({ lessons }) {
         </div>
        
       </main>
-
-      <footer className={styles.footer}>
-        
-      </footer>
     </div>
   )
 }

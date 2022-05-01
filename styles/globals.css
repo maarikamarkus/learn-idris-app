@@ -3,7 +3,6 @@
 @import 'tailwindcss/utilities';
 
 .btn {
-  /*@apply bg-sky-100 text-blue-600 rounded p-2 cursor-pointer;*/
   @apply text-[#1687A7] bg-[#D3E0EA] rounded p-2 cursor-pointer hover:bg-[#276678] hover:text-[#D3E0EA];
 }
 
@@ -12,7 +11,7 @@
 }
 
 .lesson-link {
-  @apply text-[#1687A7] bg-[#D3E0EA] rounded px-3 pt-2 pb-1 hover:bg-[#276678] hover:text-[#D3E0EA];
+  @apply text-[#1687A7] bg-[#D3E0EA] rounded p-2 hover:bg-[#276678] hover:text-[#D3E0EA];
 }
 
 .accordion-row {
@@ -25,6 +24,10 @@
 
 .accordion-btn {
   @apply accordion-button relative flex items-center w-full py-4 px-5 text-base text-gray-800 text-left bg-white border-0 rounded-none transition focus:outline-none;
+}
+
+.title {
+  @apply text-[#1687A7] mb-10 text-xl
 }
 
 .accordion-body,

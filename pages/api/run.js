@@ -7,6 +7,7 @@ const yaml = require('js-yaml');
 const checkCompilePassText = "Learn Idris App test result:";
 
 export default async function handler(req, res) {
+  const startTimeMs = Date.now();
   const userCode = req.body.code;
   const lessonId = req.body.lessonId;
   
@@ -64,6 +65,8 @@ export default async function handler(req, res) {
   }
   
   const lessonPassed = testResults.every(({ passed }) => passed);
+  const execDuration = Date.now() - startTimeMs;
+  console.log(`Tests running time: ${execDuration} ms`);
   res.status(200).send({testResults, lessonPassed});
 }
 
