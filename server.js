@@ -1,5 +1,3 @@
-//import { formatTerminalOutput } from 'lib/format-terminal';
-
 const express = require('express');
 const next = require('next');
 
@@ -22,7 +20,6 @@ app.prepare().then(() => {
   const myPool = createContainerPool();
   
   server.use(express.json());
-  //server.use(express.urlencoded({ extended: true }));
   
   server.all('/api/run', (req, res) => {
     console.log('server.js kutsuti');
@@ -45,6 +42,7 @@ app.prepare().then(() => {
 
 
 async function run(req, res, myPool) {
+  const startTimeMs = Date.now();
   const userCode = req.body.code;
   const lessonId = req.body.lessonId;
 
@@ -104,6 +102,8 @@ async function run(req, res, myPool) {
   await myPool.release(containerName);
 
   const lessonPassed = testResults.every(({ passed }) => passed);
+  const execDuration = Date.now() - startTimeMs;
+  console.log(`Tests running time: ${execDuration} ms`);
   res.status(200).send({testResults, lessonPassed});
 }
 
