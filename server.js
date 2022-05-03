@@ -22,7 +22,6 @@ app.prepare().then(() => {
   server.use(express.json());
   
   server.all('/api/run', (req, res) => {
-    console.log('server.js kutsuti');
     return run(req, res, myPool);
   });
 
@@ -42,7 +41,6 @@ app.prepare().then(() => {
 
 
 async function run(req, res, myPool) {
-  const startTimeMs = Date.now();
   const userCode = req.body.code;
   const lessonId = req.body.lessonId;
 
@@ -53,10 +51,12 @@ async function run(req, res, myPool) {
   console.log('Container name: ', containerName);
   for (const group of testCases.groups) {
     const funName = group.function;
+    const funType = group.type ?? 'pure';
     
     for (const testCase of group.test) {
       const input = testCase.parameters;
-      const testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\tputStrLn (show (${funName} ${input}))\n`;
+      //const testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\tputStrLn (show (${funName} ${input}))\n`;
+      const testCode = getTestCode(userCode, funType, funName, input);
 
       let result;
       try {
@@ -81,7 +81,7 @@ async function run(req, res, myPool) {
         continue;
       }
       const actual = match[1].trim();
-      const expected = testCase.output;
+      const expected = testCase.output.toString().replaceAll('\\n', '\n');
       
       if (actual === expected.toString()) {
         testResults.push({
@@ -102,8 +102,6 @@ async function run(req, res, myPool) {
   await myPool.release(containerName);
 
   const lessonPassed = testResults.every(({ passed }) => passed);
-  const execDuration = Date.now() - startTimeMs;
-  console.log(`Tests running time: ${execDuration} ms`);
   res.status(200).send({testResults, lessonPassed});
 }
 
@@ -175,4 +173,14 @@ async function runTestWithDocker(test, containerName) {
 
 async function getTestCases(lessonId) {
   return yaml.load(await fs.readFile("_tests/" + lessonId + ".yml", "utf-8"));
+}
+
+function getTestCode(userCode, funType, funName, input) {
+  let testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\t`;
+  if (funType === 'pure') {
+    testCode += `putStrLn (show (${funName} ${input}))\n`;
+  } else if (funType === 'IO') {
+    testCode += `${funName} ${input}\n`;
+  }
+  return testCode;
 }
