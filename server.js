@@ -55,7 +55,6 @@ async function run(req, res, myPool) {
     
     for (const testCase of group.test) {
       const input = testCase.parameters;
-      //const testCode = `${userCode}\n\nmain : IO ()\nmain = do\n\tputStrLn ("${checkCompilePassText}")\n\tputStrLn (show (${funName} ${input}))\n`;
       const testCode = getTestCode(userCode, funType, funName, input);
 
       let result;
