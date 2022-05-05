@@ -1,0 +1,7 @@
+groups:
+  - function: modulo
+    test:
+      - parameters: 5 2
+        output: 1
+      - parameters: 2 3
+        output: 2

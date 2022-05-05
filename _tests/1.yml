@@ -1,0 +1,7 @@
+groups:
+  - function: liida5
+    test:
+      - parameters: 1
+        output: 6
+      - parameters: 5
+        output: 10
